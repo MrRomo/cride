@@ -85,13 +85,20 @@ class UserViewSet(mixins.RetrieveModelMixin,
         user = self.get_object()
         profile = user.profile
         partial = request.method == 'PATCH'
+        user_serializer = UserModelSerializer(
+            user,
+            data=request.data,
+            partial=partial
+        )
         serializer = ProfileModelSerializer(
             profile,
             data=request.data,
             partial=partial
         )
         serializer.is_valid(raise_exception=True)
+        user_serializer.is_valid(raise_exception=True)
         serializer.save()
+        user_serializer.save()
         data = UserModelSerializer(user).data
         return Response(data)
 
